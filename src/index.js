@@ -72,7 +72,14 @@ const typeFor = (property: any): string => {
   } else if (property.type === "object") {
     return propertiesTemplate(propertiesList(property)).replace(/"/g, "");
   }
-  return typeMapping[property.type] || definitionTypeName(property.$ref);
+  // return typeMapping[property.type] || definitionTypeName(property.$ref);
+  if (typeMapping[property.type]) {
+    return typeMapping[property.type];
+  } else if (property.$ref) {
+    return definitionTypeName(property.$ref);
+  }
+  return undefined;
+
 };
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
@@ -94,6 +101,8 @@ const propertyKeyForDefinition = (
 };
 
 const propertiesList = (definition: Object) => {
+  console.log(definition.title);
+
   if ("allOf" in definition) {
     return definition.allOf.map(propertiesList);
   }
